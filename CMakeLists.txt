@@ -12,9 +12,9 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 # Set the output directory for the executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-#set(HEADER_FILES include/aaron.h include/abhishek.h include/kmeans.h)
+# set(HEADER_FILES include/aaron.h)
 
-add_executable(calibration_and_ar src/main.cpp ) # ${HEADER_FILES})
+add_executable(calibration_and_ar src/main_aa.cpp src/aaron.cpp) # ${HEADER_FILES})
 #add_executable(calibration_and_ar src/reading_dnn.cpp)
 
 target_link_libraries(calibration_and_ar ${OpenCV_LIBS})
