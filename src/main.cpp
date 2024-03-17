@@ -26,11 +26,13 @@ int main(int argc, char *argv[]) {
     cv::namedWindow("Video", 1); // identifies a window
     Mat frame, gray;
 
-    // char key_flag = 'o';
-    
-    Size sizeChessboard(6,8);
-    vector<Point2f> corner_set;
+    // Parameters
+    Size sizeChessboard(9,6);
     bool success;
+    vector<Point2f> corner_set;
+    vector<Vec3f> point_set;
+    vector<vector<Vec3f>> point_list;
+    vector<vector<Point2f>> corner_list;
 
     for(;;) {
         *capdev >> frame; 
@@ -40,23 +42,44 @@ int main(int argc, char *argv[]) {
         }
         char key = cv::waitKey(1);
         //////////////////////// TASK 1 ////////////////////////
+        
+        //convert frame to grayscale to pass to functions
         cvtColor(frame, gray, COLOR_BGR2GRAY);
-        success = findChessboardCorners(gray, sizeChessboard, corner_set, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FAST_CHECK | CALIB_CB_NORMALIZE_IMAGE);
+        success = findChessboardCorners(gray, sizeChessboard, corner_set, CALIB_CB_FAST_CHECK);
 
+        //runs if chessboard detected
         if(success){
-            cornerSubPix(gray, corner_set, Size(11,11), Size(-1,-1), TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 30, 0.0001 ));
-            drawChessboardCorners(frame, sizeChessboard, corner_set, success);
-
-            // TASK 2
-            if(key == 's'){
-                imwrite("../../data/images/image_sample.jpg", frame); //testing purposes for now
+            //setting global coordinates of chessboard with X (pointing left), Y (pointing up), and Z (pointing out the screen)
+            //global coordinates: (0,0,0) start at upper left internal corner of checkerboard
+            for(int row = 0; row < (sizeChessboard.height)*-1; row--){
+                for(int col = 0; col < sizeChessboard.width; col++){
+                    point_set.push_back(Vec3f(col,row,0));
+                }
             }
+
+            //get corners
+            cornerSubPix(gray, corner_set, Size(11,11), Size(-1,-1), TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 30, 0.0001));
+
+            //draw chessboard corners on frame
+            drawChessboardCorners(frame, sizeChessboard, corner_set, success);
         }
 
         //////////////////////// TASK 2 ////////////////////////
+        if(key == 's'){
+            //appending to corner_list and point_list
+            select_images(corner_set, corner_list, point_set, point_list);
+
+            //print err checking
+            if(corner_list.size() != point_list.size()){
+                cout << "WARNING: corner list and point list do not match in dimension, check program." << endl;
+            }
+            else{
+                cout << corner_list.size() << " of 5 required calibration images saved." << endl;
+            }
+        }
 
         //////////////////////// TASK 3 ////////////////////////
-
+        
         //////////////////////// TASK 4 ////////////////////////
 
         //////////////////////// TASK 5 ////////////////////////
