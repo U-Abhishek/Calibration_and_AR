@@ -2,9 +2,6 @@
 
 #include "../include/aaron.h"
 
-using namespace std;
-using namespace cv;
-
 int capture_cal_images(){
     cout << "Take 10 pictures of the checkerboard in different orientations" << endl;
 
@@ -57,6 +54,11 @@ int capture_cal_images(){
     return(0);
 }
 
+int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_list, vector<Vec3f> &point_set, vector<vector<Vec3f>> &point_list){
+    corner_list.push_back(corner_set);
+    point_list.push_back(point_set);
+    return(0);
+}
 
 int calibrate_images(string filepath){
     
