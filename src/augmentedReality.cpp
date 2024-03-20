@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
             int N = 20;
             generate_sphere_points(N, count_flag, radius, origin, sphere_points);
             cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
-            for (const auto& point : imagePoints) {
+            for (const auto& point : imagePoints){
                 cv::circle(frame, point, 1, cv::Scalar(255, 0, 0), -1);
             }
         }
