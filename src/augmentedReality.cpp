@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
             float radius = 5.0;
             vector<float> origin = {0,0,5};
             vector<Point3f> sphere_points;
-            int N = 500;
+            int N = 20;
             generate_sphere_points(N, radius, origin, sphere_points);
 
             cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);

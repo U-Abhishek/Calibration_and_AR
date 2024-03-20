@@ -62,7 +62,6 @@ int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_li
 
 int generate_sphere_points(int N, float radius, vector<float> origin, vector<Point3f> &objectPoints){
     float theta, phi;
-    vector<Point3f> points;
     for (int i = 0; i < N; ++i) {
         theta = 2 * CV_PI * i / N;
         for (int j = 0; j < N; ++j) {
@@ -70,7 +69,7 @@ int generate_sphere_points(int N, float radius, vector<float> origin, vector<Poi
             float x_val = radius * cos(theta) * sin(phi);
             float y_val = radius * sin(theta) * sin(phi);
             float z_val = radius * cos(phi);
-            points.push_back(Point3f(x_val, y_val, z_val));
+            objectPoints.push_back(Point3f(x_val, y_val, z_val));
         }
     }
     return(0);
