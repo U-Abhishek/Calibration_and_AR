@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     VideoCapture *capdev;
 
     // open the video device
-    capdev = new cv::VideoCapture(0);
+    capdev = new cv::VideoCapture(1);
     if( !capdev->isOpened() ) {
             printf("Unable to open video device\n");
             return(-1);
@@ -27,19 +27,23 @@ int main(int argc, char *argv[]) {
     cv::namedWindow("Video", 1); 
     Mat frame, gray;
 
-    // Parameters
+    // parameters for detecting chessboard
     Size sizeChessboard(9,6);
     bool success;
     vector<Point2f> corner_set;
     vector<Vec3f> point_set;
     vector<vector<Vec3f>> point_list;
     vector<vector<Point2f>> corner_list;
+
+    // setting global coordinates of chessboard with X (pointing left), Y (pointing up), and Z (pointing out the screen)
+    // global coordinates: (0,0,0) start at upper left internal corner of checkerboard
     for(int row = 0; row > (sizeChessboard.height)*-1; row--){
                 for(int col = 0; col < sizeChessboard.width; col++){
                     point_set.push_back(Vec3f(col,row,0));
                 }
             }
 
+    // main camera video feed loop
     for(;;) {
         *capdev >> frame; 
         if( frame.empty() ) {
@@ -55,10 +59,6 @@ int main(int argc, char *argv[]) {
 
         //runs if chessboard detected
         if(success){
-            //setting global coordinates of chessboard with X (pointing left), Y (pointing up), and Z (pointing out the screen)
-            //global coordinates: (0,0,0) start at upper left internal corner of checkerboard
-            
-
             //get corners
             cornerSubPix(gray, corner_set, Size(11,11), Size(-1,-1), TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 30, 0.0001));
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
             //appending to corner_list and point_list
             select_images(corner_set, corner_list, point_set, point_list);
 
-            //print err checking
+            //err checking print statement
             if(corner_list.size() != point_list.size()){
                 cout << "WARNING: corner list and point list do not match in dimension, check program." << endl;
             }
@@ -81,42 +81,44 @@ int main(int argc, char *argv[]) {
         }
 
         //////////////////////// TASK 3 ////////////////////////
-        if(point_list.size() == 5){
-            cv::Size image_size(frame.cols, frame.rows); 
+        if(key == 'c'){
+            if(point_list.size() >= 5){
+                cv::Size image_size(frame.cols, frame.rows); 
 
-            // Initializing the camera matrix and distortion coefficients
-            cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64FC1);
-            camera_matrix.at<double>(0, 2) = image_size.width / 2;
-            camera_matrix.at<double>(1, 2) = image_size.height / 2;
-            std::vector<double> distortion_coefficients;
+                // Initializing the camera matrix and distortion coefficients
+                cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64FC1);
+                camera_matrix.at<double>(0, 2) = image_size.width / 2;
+                camera_matrix.at<double>(1, 2) = image_size.height / 2;
+                std::vector<double> distortion_coefficients;
 
-            // Output variables
-            vector<cv::Mat> rotations, translations;
+                // Output variables
+                vector<cv::Mat> rotations, translations;
 
-            // Perform camera calibration
-            double reprojection_error = cv::calibrateCamera(point_list, corner_list, image_size, camera_matrix, distortion_coefficients,
-                                                        rotations, translations, cv::CALIB_FIX_ASPECT_RATIO);
+                // Perform camera calibration
+                double reprojection_error = cv::calibrateCamera(point_list, corner_list, image_size, camera_matrix, distortion_coefficients,
+                                                            rotations, translations, cv::CALIB_FIX_ASPECT_RATIO);
 
-            cout << "Calibration Results:" << endl;
-            cout << "Camera Matrix:\n" << camera_matrix << endl;
-            //cout << "Distortion Coefficients:\n" << distortion_coefficients << endl;
+                cout << "Calibration Results:" << endl;
+                cout << "Camera Matrix:\n" << camera_matrix << endl;
+                //cout << "Distortion Coefficients:\n" << distortion_coefficients << endl;
 
-            for (size_t i = 0; i < rotations.size(); ++i) {
-                cout << "Image " << i + 1 << ":\n";
-                cout << "Rotation Vector:\n" << rotations[i] << endl;
-                cout << "Translation Vector:\n" << translations[i] << endl;
+                for (size_t i = 0; i < rotations.size(); ++i) {
+                    cout << "Image " << i + 1 << ":\n";
+                    cout << "Rotation Vector:\n" << rotations[i] << endl;
+                    cout << "Translation Vector:\n" << translations[i] << endl;
+                }
+                cout << "Total Reprojection Error: " << reprojection_error << endl;
+
+                // write camera matrix and distoriton coefficients to YAML file
+                write_camera_calibration(camera_matrix, distortion_coefficients);
+
+                delete capdev;
+                return(0);
             }
-            cout << "Total Reprojection Error: " << reprojection_error << endl;
-            delete capdev;
-            return(0);
+            else{
+            cout << "Must have 5 or more images saved to calibrate.\n Press 's' with chessboard in frame to save more calibration images." << endl;
+            }
         }
-        
-
-        //////////////////////// TASK 4 ////////////////////////
-
-        //////////////////////// TASK 5 ////////////////////////
-
-        //////////////////////// TASK 6 ////////////////////////
         if(key == 'q') {
             break;
         }
