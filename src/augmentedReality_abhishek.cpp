@@ -95,11 +95,16 @@ int main(int argc, char *argv[]) {
             ////////////////////////// Task 5 ////////////////////////
             const float scale = 5.0f;
             std::vector<cv::Point3f> objectPoints = {
-                cv::Point3f(0, 0, scale/2), 
-                cv::Point3f(scale / 1, -scale / 2, 0),  
-                cv::Point3f(scale / 2.5, scale / 1, 0),
-                cv::Point3f(-scale / 3, scale / 3, 0),
-                cv::Point3f(0, 0, scale)           
+                cv::Point3f(0, 0, scale/2+3), 
+                cv::Point3f(scale / 1, -scale / 2, 3),  
+                cv::Point3f(scale / 2.5, scale / 1, 3),
+                cv::Point3f(-scale / 3, scale / 3, 3),
+                cv::Point3f(0, 0, scale+3),
+                cv::Point3f(0, 0, scale/5+3), 
+                cv::Point3f(scale, -scale / 2, 3),  
+                cv::Point3f(scale / 2.5, scale / 1, 3),
+                cv::Point3f(-scale, scale / 3, 3),
+                cv::Point3f(0, 0, scale+3)           
             };
 
             std::vector<cv::Point2f> imagePoints;
@@ -107,11 +112,11 @@ int main(int argc, char *argv[]) {
 
             // Draw projected points on an image (assuming a blank image for demonstration)
             for (const auto& point : imagePoints) {
-                cv::circle(frame, point, 5, cv::Scalar(0, 255, 0), -1);
+                cv::circle(frame, point, 5, cv::Scalar(255, 0, 255), -1);
                 }
 
             ///////////////////////// Task 6 ///////////////////////////
-            cv::Scalar color(0, 255, 0);
+            cv::Scalar color(100, 25, 150);
             cv::line(frame, imagePoints[0], imagePoints[1], color, 2);
             cv::line(frame, imagePoints[1], imagePoints[2], color, 2);
             cv::line(frame, imagePoints[2], imagePoints[3], color, 2);
@@ -123,6 +128,19 @@ int main(int argc, char *argv[]) {
             cv::line(frame, imagePoints[1], imagePoints[4], color, 2);
             cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
             cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
+
+
+            cv::line(frame, imagePoints[0+4], imagePoints[1+4], color, 2);
+            cv::line(frame, imagePoints[1+4], imagePoints[2+4], color, 2);
+            cv::line(frame, imagePoints[2+4], imagePoints[3+4], color, 2);
+            cv::line(frame, imagePoints[3+4], imagePoints[0+4], color, 2);
+            cv::line(frame, imagePoints[3+4], imagePoints[1+4], color, 2);
+            cv::line(frame, imagePoints[2+4], imagePoints[0+4], color, 2);
+
+            cv::line(frame, imagePoints[0+4], imagePoints[4+4], color, 2);
+            cv::line(frame, imagePoints[1+4], imagePoints[4+4], color, 2);
+            cv::line(frame, imagePoints[2+4], imagePoints[4+4], color, 2);
+            cv::line(frame, imagePoints[3+4], imagePoints[4+4], color, 2);
         }
 
         //////////////////////// TASK 2 ////////////////////////
@@ -167,9 +185,6 @@ int main(int argc, char *argv[]) {
         
         
 
-        //////////////////////// TASK 5 ////////////////////////
-
-        //////////////////////// TASK 6 ////////////////////////
         if(key == 'q') {
             break;
         }
