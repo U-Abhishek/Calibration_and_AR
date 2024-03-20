@@ -21,4 +21,4 @@ int capture_cal_images();
 
 int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_list, vector<Vec3f> &point_set, vector<vector<Vec3f>> &point_list);
 
-int generate_sphere_points(int N, float radius, vector<float> origin, vector<Point3f> &objectPoints);
+int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> origin, vector<Point3f> &objectPoints);

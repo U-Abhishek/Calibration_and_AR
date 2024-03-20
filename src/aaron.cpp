@@ -60,17 +60,36 @@ int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_li
     return(0);
 }
 
-int generate_sphere_points(int N, float radius, vector<float> origin, vector<Point3f> &objectPoints){
+int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> origin, vector<Point3f> &objectPoints){
     float theta, phi;
     for (int i = 0; i < N; ++i) {
         theta = 2 * CV_PI * i / N;
         for (int j = 0; j < N; ++j) {
             phi = CV_PI * j / N;
-            float x_val = radius * cos(theta) * sin(phi);
-            float y_val = radius * sin(theta) * sin(phi);
-            float z_val = radius * cos(phi);
+            float x_val = origin[0]+(radius * cos(theta) * sin(phi));
+            float y_val = origin[1]+(radius * sin(theta) * sin(phi));
+            float z_val = origin[2]+(radius * cos(phi));
             objectPoints.push_back(Point3f(x_val, y_val, z_val));
         }
+    }
+    if(count_flag == 0){
+        cout << radius << endl;
+        if(radius >= 1.5){
+            count_flag = 1;
+        }
+        else{
+            radius = radius + 0.1;
+        }
+        return(0);
+    }
+    if(count_flag == 1){
+        if(radius <= 1.0){
+            count_flag = 0;
+        }
+        else{
+            radius = radius - 0.1;
+        }
+        return(0);
     }
     return(0);
 }
