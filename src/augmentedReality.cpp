@@ -91,6 +91,38 @@ int main(int argc, char *argv[]) {
             else if(innerSuccess = false){
                 cout << "solvePnP FAILED" << endl;
             }
+
+            ////////////////////////// Task 5 ////////////////////////
+            const float scale = 5.0f;
+            std::vector<cv::Point3f> objectPoints = {
+                cv::Point3f(0, 0, scale/2), 
+                cv::Point3f(scale / 1, -scale / 2, 0),  
+                cv::Point3f(scale / 2.5, scale / 1, 0),
+                cv::Point3f(-scale / 3, scale / 3, 0),
+                cv::Point3f(0, 0, scale)           
+            };
+
+            std::vector<cv::Point2f> imagePoints;
+            cv::projectPoints(objectPoints, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+
+            // Draw projected points on an image (assuming a blank image for demonstration)
+            for (const auto& point : imagePoints) {
+                cv::circle(frame, point, 5, cv::Scalar(0, 255, 0), -1);
+                }
+
+            ///////////////////////// Task 6 ///////////////////////////
+            cv::Scalar color(0, 255, 0);
+            cv::line(frame, imagePoints[0], imagePoints[1], color, 2);
+            cv::line(frame, imagePoints[1], imagePoints[2], color, 2);
+            cv::line(frame, imagePoints[2], imagePoints[3], color, 2);
+            cv::line(frame, imagePoints[3], imagePoints[0], color, 2);
+            cv::line(frame, imagePoints[3], imagePoints[1], color, 2);
+            cv::line(frame, imagePoints[2], imagePoints[0], color, 2);
+
+            cv::line(frame, imagePoints[0], imagePoints[4], color, 2);
+            cv::line(frame, imagePoints[1], imagePoints[4], color, 2);
+            cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
+            cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
         }
 
         //////////////////////// TASK 2 ////////////////////////
