@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     VideoCapture *capdev;
 
     // open the video device
-    capdev = new cv::VideoCapture(1);
+    capdev = new cv::VideoCapture(0);
     if( !capdev->isOpened() ) {
             printf("Unable to open video device\n");
             return(-1);
@@ -123,6 +123,23 @@ int main(int argc, char *argv[]) {
             cv::line(frame, imagePoints[1], imagePoints[4], color, 2);
             cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
             cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
+
+            ///////////////////////// Extension: drawing sphere ///////////////////////////
+            float radius = 5.0;
+            vector<float> origin = {0,0,5};
+            vector<Point3f> sphere_points;
+            int N = 20;
+            generate_sphere_points(N, radius, origin, sphere_points);
+
+            cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+
+            for (const auto& point : imagePoints) {
+                cv::circle(frame, point, 5, cv::Scalar(255, 0, 0), -1);
+            }
+
+
+            
+
         }
 
         //////////////////////// TASK 2 ////////////////////////

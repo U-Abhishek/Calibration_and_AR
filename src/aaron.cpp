@@ -60,7 +60,17 @@ int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_li
     return(0);
 }
 
-int calibrate_images(string filepath){
-    
+int generate_sphere_points(int N, float radius, vector<float> origin, vector<Point3f> &objectPoints){
+    float theta, phi;
+    for (int i = 0; i < N; ++i) {
+        theta = 2 * CV_PI * i / N;
+        for (int j = 0; j < N; ++j) {
+            phi = CV_PI * j / N;
+            float x_val = radius * cos(theta) * sin(phi);
+            float y_val = radius * sin(theta) * sin(phi);
+            float z_val = radius * cos(phi);
+            objectPoints.push_back(Point3f(x_val, y_val, z_val));
+        }
+    }
     return(0);
 }
