@@ -93,3 +93,88 @@ int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> 
     }
     return(0);
 }
+
+int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coefficients){
+    //reading in filename from terminal
+    string filename;
+    FileStorage fs;
+
+    while(true){
+        cout << "Enter the name of the YAML file containing calibration matrix and distortion coefficients (without file path or extension): ";
+        getline(cin, filename);
+
+        //error checking
+        if (filename.substr(filename.length() - 5) != ".yaml") {
+            filename += ".yaml";
+        }
+        if(filename.substr(0,23) != "../../data/calibration/"){
+            filename = "../../data/calibration/" + filename;
+        }
+
+        // setting to read file
+        fs.open(filename, FileStorage::READ);
+        // error check read file
+        if(fs.isOpened()) {
+            break;
+        }
+        else{
+            cerr << "Failed to open " << filename << "Check filename and make sure there is a file in the data/calibration path" << endl;
+        }
+    }
+    
+
+    // read parameters to variables
+    fs["camera_matrix"] >> camera_matrix;
+    fs["distortion_coefficients"] >> distortion_coefficients;
+    
+    fs.release();
+
+    // printing camera matrix and distortion coefficients for confirmation
+    cout << "Camera matrix:" << endl << camera_matrix << endl;
+    cout << "Distortion coefficients:" << endl;
+    cout << "[ ";
+    for(int i = 0; i < distortion_coefficients.size(); i++){
+        if(i != distortion_coefficients.size()){
+            cout << distortion_coefficients[i] << ", ";
+        }
+        else{
+            cout << distortion_coefficients[i];
+        }
+    }
+    cout << " ]" << endl;
+    
+    return 0;
+}
+
+int write_camera_calibration(Mat camera_matrix, vector<double> distortion_coefficients){
+    //grab filename from terminal
+    string filename;
+    cout << "Enter the name of the YAML file to save camera calibration matrix and distortion coefficients (without extension or filepath): ";
+    getline(cin, filename);
+
+    // error checking input string
+    if (filename.substr(filename.length() - 5) != ".yaml") {
+        filename += ".yaml";
+    }
+    if(filename.substr(0,23) != "../../data/calibration/"){
+        filename = "../../data/calibration/" + filename;
+    }
+
+    // initializing to write file
+    FileStorage fs(filename, FileStorage::WRITE);
+    // error checking file open
+    if (!fs.isOpened()) {
+        cerr << "Failed to open " << filename << endl;
+        return -1;
+    }
+
+    //write camera matrix and distortion coefficients to YAML
+    fs << "camera_matrix" << camera_matrix;
+    fs << "distortion_coefficients" << distortion_coefficients;
+    fs.release();
+
+    // print successful calibration parameters
+    cout << "Calibration parameters saved to " << filename << endl;\
+
+    return 0;
+}

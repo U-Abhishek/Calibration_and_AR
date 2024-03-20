@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     cv::namedWindow("Video", 1); 
     Mat frame, gray;
 
-    // Parameters
+    // parameters for detecting chessboard
     Size sizeChessboard(9,6);
     bool success;
     vector<Point2f> corner_set;
@@ -35,14 +35,15 @@ int main(int argc, char *argv[]) {
     vector<vector<Vec3f>> point_list;
     vector<vector<Point2f>> corner_list;
 
-    //setting global coordinates of chessboard with X (pointing left), Y (pointing up), and Z (pointing out the screen)
-    //global coordinates: (0,0,0) start at upper left internal corner of checkerboard
+    // setting global coordinates of chessboard with X (pointing left), Y (pointing up), and Z (pointing out the screen)
+    // global coordinates: (0,0,0) start at upper left internal corner of checkerboard
     for(int row = 0; row > (sizeChessboard.height)*-1; row--){
                 for(int col = 0; col < sizeChessboard.width; col++){
                     point_set.push_back(Vec3f(col,row,0));
                 }
             }
 
+    // main camera video feed loop
     for(;;) {
         *capdev >> frame; 
         if( frame.empty() ) {
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
             //appending to corner_list and point_list
             select_images(corner_set, corner_list, point_set, point_list);
 
-            //print err checking
+            //err checking print statement
             if(corner_list.size() != point_list.size()){
                 cout << "WARNING: corner list and point list do not match in dimension, check program." << endl;
             }
@@ -108,31 +109,8 @@ int main(int argc, char *argv[]) {
                 }
                 cout << "Total Reprojection Error: " << reprojection_error << endl;
 
-                string filename;
-                cout << "Enter the name of the YAML file to save camera calibration matrix and distortion coefficients (without extension or filepath): ";
-                getline(cin, filename);
-
-                if (filename.substr(filename.length() - 5) != ".yaml") {
-                    filename += ".yaml";
-                }
-                if(filename.substr(0,23) != "../../data/calibration/"){
-                    filename = "../../data/calibration/" + filename;
-                }
-
-                FileStorage fs(filename, FileStorage::WRITE);
-
-                if (!fs.isOpened()) {
-                    cerr << "Failed to open " << filename << endl;
-                    return -1;
-                }
-
-                //write camera matrix and distortion coefficients to YAML
-                fs << "camera_matrix" << camera_matrix;
-                fs << "distortion_coefficients" << distortion_coefficients;
-                fs.release();
-
-                // print successful calibration parameters
-                cout << "Calibration parameters saved to " << filename << endl;
+                // write camera matrix and distoriton coefficients to YAML file
+                write_camera_calibration(camera_matrix, distortion_coefficients);
 
                 delete capdev;
                 return(0);
