@@ -43,21 +43,17 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Output variables for camera calibration
-    // int calibration_flag = 1;
-
-    cv::Size image_size(refS.width, refS.height); 
-
     // Initializing the camera matrix and distortion coefficients
-    cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64FC1);
-    camera_matrix.at<double>(0, 2) = 327.4888231884889;
-    camera_matrix.at<double>(1, 2) = 236.3120762355374;
-    camera_matrix.at<double>(0, 0) = 465.7752569140609;
-    camera_matrix.at<double>(1, 1) = 465.7752569140609;
-    camera_matrix.at<double>(2, 2) = 1;
+    Mat camera_matrix;
+    vector<double> distortion_coefficients;
+    read_camera_calibration(camera_matrix, distortion_coefficients);
 
-    std::vector<double> distortion_coefficients = {0.245898, -0.895857, -0.00232721, 0.00635609, 0.908045};
+    //global variables for drawing sphere
+    int count_flag = 0;
+    float radius = 1.0;
+    vector<float> origin = {8,-5,3};
 
+    //main camera video feed loop
     for(;;) {
         *capdev >> frame; 
         if( frame.empty() ) {
@@ -129,6 +125,7 @@ int main(int argc, char *argv[]) {
             cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
             cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
 
+<<<<<<< HEAD:src/augmentedReality_abhishek.cpp
 
             cv::line(frame, imagePoints[0+4], imagePoints[1+4], color, 2);
             cv::line(frame, imagePoints[1+4], imagePoints[2+4], color, 2);
@@ -185,6 +182,19 @@ int main(int argc, char *argv[]) {
         
         
 
+=======
+            ///////////////////////// Extension: drawing sphere ///////////////////////////
+
+            vector<Point3f> sphere_points;
+            int N = 20;
+            generate_sphere_points(N, count_flag, radius, origin, sphere_points);
+            cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+            for (const auto& point : imagePoints){
+                cv::circle(frame, point, 1, cv::Scalar(255, 0, 0), -1);
+            }
+        }
+
+>>>>>>> 0268fc2f25eedd37f77eb46ae92ec14d65ae2210:src/augmentedReality.cpp
         if(key == 'q') {
             break;
         }
