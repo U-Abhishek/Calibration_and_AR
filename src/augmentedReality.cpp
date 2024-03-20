@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     VideoCapture *capdev;
 
     // open the video device
-    capdev = new cv::VideoCapture(0);
+    capdev = new cv::VideoCapture(1);
     if( !capdev->isOpened() ) {
             printf("Unable to open video device\n");
             return(-1);
@@ -57,6 +57,11 @@ int main(int argc, char *argv[]) {
     camera_matrix.at<double>(2, 2) = 1;
 
     std::vector<double> distortion_coefficients = {0.245898, -0.895857, -0.00232721, 0.00635609, 0.908045};
+
+    //For sphere
+    int count_flag = 0;
+    float radius = 1.0;
+    vector<float> origin = {8,-5,3};
 
     for(;;) {
         *capdev >> frame; 
@@ -125,68 +130,16 @@ int main(int argc, char *argv[]) {
             cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
 
             ///////////////////////// Extension: drawing sphere ///////////////////////////
-            float radius = 5.0;
-            vector<float> origin = {0,0,5};
+
             vector<Point3f> sphere_points;
             int N = 20;
-            generate_sphere_points(N, radius, origin, sphere_points);
-
+            generate_sphere_points(N, count_flag, radius, origin, sphere_points);
             cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
-
             for (const auto& point : imagePoints) {
-                cv::circle(frame, point, 5, cv::Scalar(255, 0, 0), -1);
+                cv::circle(frame, point, 1, cv::Scalar(255, 0, 0), -1);
             }
-
-
-            
-
         }
 
-        //////////////////////// TASK 2 ////////////////////////
-        // if(key == 's' && success == true){
-        //     //appending to corner_list and point_list
-        //     select_images(corner_set, corner_list, point_set, point_list);
-
-        //     //print err checking
-        //     if(corner_list.size() != point_list.size()){
-        //         cout << "WARNING: corner list and point list do not match in dimension, check program." << endl;
-        //     }
-        //     else{
-        //         cout << corner_list.size() << " of 5 required calibration images saved." << endl;
-        //     }
-        // }
-
-        //////////////////////// TASK 3 ////////////////////////
-
-        // if(point_list.size() == 5 && calibration_flag == 0){
-        //     vector<cv::Mat> rotations, translations;
-
-        //     // Perform camera calibration
-        //     double reprojection_error = cv::calibrateCamera(point_list, corner_list, image_size, camera_matrix, distortion_coefficients,
-        //                                                 rotations, translations, cv::CALIB_FIX_ASPECT_RATIO);
-
-        //     cout << "Calibration Results:" << endl;
-        //     cout << "Camera Matrix:\n" << camera_matrix << endl;
-        //     cout << "Distortion Coefficients:" << endl;
-        //     for (int i = 0; i < distortion_coefficients.size(); i++){
-        //         cout << distortion_coefficients[i] << ", ";
-        //     }
-        //     cout << endl;
-        //     for (size_t i = 0; i < rotations.size(); ++i) {
-        //         cout << "Image " << i + 1 << ":\n";
-        //         cout << "Rotation Vector:\n" << rotations[i] << endl;
-        //         cout << "Translation Vector:\n" << translations[i] << endl;
-        //     }
-        //     cout << "Total Reprojection Error: " << reprojection_error << endl;
-            
-        //     calibration_flag++;
-        // }
-        
-        
-
-        //////////////////////// TASK 5 ////////////////////////
-
-        //////////////////////// TASK 6 ////////////////////////
         if(key == 'q') {
             break;
         }
