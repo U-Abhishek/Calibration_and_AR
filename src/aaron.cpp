@@ -146,25 +146,31 @@ int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coeff
 }
 
 int write_camera_calibration(Mat camera_matrix, vector<double> distortion_coefficients){
-    //grab filename from terminal
+    //reading in filename from terminal
     string filename;
-    cout << "Enter the name of the YAML file to save camera calibration matrix and distortion coefficients (without extension or filepath): ";
-    getline(cin, filename);
+    FileStorage fs;
 
-    // error checking input string
-    if (filename.substr(filename.length() - 5) != ".yaml") {
-        filename += ".yaml";
-    }
-    if(filename.substr(0,23) != "../../data/calibration/"){
-        filename = "../../data/calibration/" + filename;
-    }
+    while(true){
+        cout << "Enter the name of the YAML file containing calibration matrix and distortion coefficients (without file path or extension): ";
+        getline(cin, filename);
 
-    // initializing to write file
-    FileStorage fs(filename, FileStorage::WRITE);
-    // error checking file open
-    if (!fs.isOpened()) {
-        cerr << "Failed to open " << filename << endl;
-        return -1;
+        //error checking
+        if (filename.substr(filename.length() - 5) != ".yaml") {
+            filename += ".yaml";
+        }
+        if(filename.substr(0,23) != "../../data/calibration/"){
+            filename = "../../data/calibration/" + filename;
+        }
+
+        // setting to read file
+        fs.open(filename, FileStorage::WRITE);
+        // error check read file
+        if(fs.isOpened()) {
+            break;
+        }
+        else{
+            cerr << "Failed to open " << filename << "\nCheck filename or path location" << endl;
+        }
     }
 
     //write camera matrix and distortion coefficients to YAML
