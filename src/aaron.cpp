@@ -60,7 +60,120 @@ int select_images(vector<Point2f> corner_set, vector<vector<Point2f>> &corner_li
     return(0);
 }
 
-int calibrate_images(string filepath){
-    
+int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> origin, vector<Point3f> &objectPoints){
+    float theta, phi;
+    for (int i = 0; i < N; ++i) {
+        theta = 2 * CV_PI * i / N;
+        for (int j = 0; j < N; ++j) {
+            phi = CV_PI * j / N;
+            float x_val = origin[0]+(radius * cos(theta) * sin(phi));
+            float y_val = origin[1]+(radius * sin(theta) * sin(phi));
+            float z_val = origin[2]+(radius * cos(phi));
+            objectPoints.push_back(Point3f(x_val, y_val, z_val));
+        }
+    }
+    if(count_flag == 0){
+        if(radius >= 1.5){
+            count_flag = 1;
+        }
+        else{
+            radius = radius + 0.1;
+        }
+        return(0);
+    }
+    if(count_flag == 1){
+        if(radius <= 1.0){
+            count_flag = 0;
+        }
+        else{
+            radius = radius - 0.1;
+        }
+        return(0);
+    }
     return(0);
+}
+
+int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coefficients){
+    //reading in filename from terminal
+    string filename;
+    FileStorage fs;
+
+    while(true){
+        cout << "Enter the name of the YAML file containing calibration matrix and distortion coefficients (without file path or extension): ";
+        getline(cin, filename);
+
+        //error checking
+        if (filename.substr(filename.length() - 5) != ".yaml") {
+            filename += ".yaml";
+        }
+        if(filename.substr(0,23) != "../../data/calibration/"){
+            filename = "../../data/calibration/" + filename;
+        }
+
+        // setting to read file
+        fs.open(filename, FileStorage::READ);
+        // error check read file
+        if(fs.isOpened()) {
+            break;
+        }
+        else{
+            cerr << "Failed to open " << filename << "\nCheck filename and make sure there is a file in the data/calibration path" << endl;
+        }
+    }
+    
+
+    // read parameters to variables
+    fs["camera_matrix"] >> camera_matrix;
+    fs["distortion_coefficients"] >> distortion_coefficients;
+    
+    fs.release();
+
+    // printing camera matrix and distortion coefficients for confirmation
+    cout << "Camera matrix:" << endl << camera_matrix << endl;
+    cout << "Distortion coefficients:" << endl;
+    cout << "[ ";
+    for(int i = 0; i < distortion_coefficients.size(); i++){
+        if(i != distortion_coefficients.size()){
+            cout << distortion_coefficients[i] << ", ";
+        }
+        else{
+            cout << distortion_coefficients[i];
+        }
+    }
+    cout << " ]" << endl;
+    
+    return 0;
+}
+
+int write_camera_calibration(Mat camera_matrix, vector<double> distortion_coefficients){
+    //grab filename from terminal
+    string filename;
+    cout << "Enter the name of the YAML file to save camera calibration matrix and distortion coefficients (without extension or filepath): ";
+    getline(cin, filename);
+
+    // error checking input string
+    if (filename.substr(filename.length() - 5) != ".yaml") {
+        filename += ".yaml";
+    }
+    if(filename.substr(0,23) != "../../data/calibration/"){
+        filename = "../../data/calibration/" + filename;
+    }
+
+    // initializing to write file
+    FileStorage fs(filename, FileStorage::WRITE);
+    // error checking file open
+    if (!fs.isOpened()) {
+        cerr << "Failed to open " << filename << endl;
+        return -1;
+    }
+
+    //write camera matrix and distortion coefficients to YAML
+    fs << "camera_matrix" << camera_matrix;
+    fs << "distortion_coefficients" << distortion_coefficients;
+    fs.release();
+
+    // print successful calibration parameters
+    cout << "Calibration parameters saved to " << filename << endl;\
+
+    return 0;
 }
