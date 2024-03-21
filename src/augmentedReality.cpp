@@ -46,12 +46,23 @@ int main(int argc, char *argv[]) {
     // Initializing the camera matrix and distortion coefficients
     Mat camera_matrix;
     vector<double> distortion_coefficients;
+    // reading camera matrix and distortion coefficients from yaml file
     read_camera_calibration(camera_matrix, distortion_coefficients);
 
     //global variables for drawing sphere
     int count_flag = 0;
     float radius = 1.0;
     vector<float> origin = {8,-5,3};
+
+    //key flag
+    char key_flag = 'o';
+
+    // Reading image for AR
+    cv::Mat image1 = cv::imread("../../data/snight.jpg");
+    if (image1.empty()) {
+        std::cerr << "Error: Could not read image1" << std::endl;
+        return -1;
+    }
 
     //main camera video feed loop
     for(;;) {
@@ -61,6 +72,30 @@ int main(int argc, char *argv[]) {
             break;
         }
         char key = cv::waitKey(1);
+        //For Task 5/6: drawing simple object
+        if(key == '5'){
+            key_flag = '5';
+        }
+        //For Task 7: Harris corners
+        if(key == '7'){
+            key_flag = '7';
+        }
+        //For Extension: expanding/contracting circle
+        if(key == 'c'){
+            key_flag = 'c';
+        }
+        //For Extension: Overlay painting onto chessboard
+        if(key == 'p'){
+            key_flag = 'p';
+        }
+        //Default: Don't overlay anything
+        if(key == 'o'){
+            key_flag = 'o';
+        }
+        if(key == 'a'){
+            key_flag = 'a';
+        }
+
         //////////////////////// TASK 1 ////////////////////////
         
         //convert frame to grayscale to pass to functions
@@ -73,7 +108,7 @@ int main(int argc, char *argv[]) {
             cornerSubPix(gray, corner_set, Size(11,11), Size(-1,-1), TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 30, 0.0001));
 
             //draw chessboard corners on frame
-            drawChessboardCorners(frame, sizeChessboard, corner_set, success);
+            //drawChessboardCorners(frame, sizeChessboard, corner_set, success);
             
             //////////////////////// TASK 4 ////////////////////////
             Mat rotations, translations;
@@ -88,113 +123,150 @@ int main(int argc, char *argv[]) {
                 cout << "solvePnP FAILED" << endl;
             }
 
-            ////////////////////////// Task 5 ////////////////////////
-            const float scale = 5.0f;
-            std::vector<cv::Point3f> objectPoints = {
-                cv::Point3f(0, 0, scale/2+3), 
-                cv::Point3f(scale / 1, -scale / 2, 3),  
-                cv::Point3f(scale / 2.5, scale / 1, 3),
-                cv::Point3f(-scale / 3, scale / 3, 3),
-                cv::Point3f(0, 0, scale+3),
-                cv::Point3f(0, 0, scale/5+3), 
-                cv::Point3f(scale, -scale / 2, 3),  
-                cv::Point3f(scale / 2.5, scale / 1, 3),
-                cv::Point3f(-scale, scale / 3, 3),
-                cv::Point3f(0, 0, scale+3)           
-            };
+            if(key_flag == '5' || key_flag == 'a'){
+                ////////////////////////// Task 5 ////////////////////////
+                cout << "dsfadsfdsafdsafdsafdsafdsafdsaf" << endl;
+                const float scale = 3.0f;
+                std::vector<cv::Point3f> objectPoints = {
+                    cv::Point3f(0, 0, scale/2+3), 
+                    cv::Point3f(scale / 1, -scale / 2, 3),  
+                    cv::Point3f(scale / 2.5, scale / 1, 3),
+                    cv::Point3f(-scale / 3, scale / 3, 3),
+                    cv::Point3f(0, 0, scale+3),
+                    cv::Point3f(0, 0, scale/5+3), 
+                    cv::Point3f(scale, -scale / 2, 3),  
+                    cv::Point3f(scale / 2.5, scale / 1, 3),
+                    cv::Point3f(-scale, scale / 3, 3),
+                    cv::Point3f(0, 0, scale+3)           
+                };
 
-            std::vector<cv::Point2f> imagePoints;
-            cv::projectPoints(objectPoints, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+                std::vector<cv::Point2f> imagePoints;
+                cv::projectPoints(objectPoints, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
 
-            // Draw projected points on an image (assuming a blank image for demonstration)
-            for (const auto& point : imagePoints) {
-                cv::circle(frame, point, 5, cv::Scalar(255, 0, 255), -1);
+                // Draw projected points on an image (assuming a blank image for demonstration)
+                for (const auto& point : imagePoints) {
+                    cv::circle(frame, point, 5, cv::Scalar(255, 0, 255), -1);
+                    }
+
+                ///////////////////////// Task 6 ///////////////////////////
+                cv::Scalar color(100, 25, 150);
+                cv::line(frame, imagePoints[0], imagePoints[1], color, 2);
+                cv::line(frame, imagePoints[1], imagePoints[2], color, 2);
+                cv::line(frame, imagePoints[2], imagePoints[3], color, 2);
+                cv::line(frame, imagePoints[3], imagePoints[0], color, 2);
+                cv::line(frame, imagePoints[3], imagePoints[1], color, 2);
+                cv::line(frame, imagePoints[2], imagePoints[0], color, 2);
+
+                cv::line(frame, imagePoints[0], imagePoints[4], color, 2);
+                cv::line(frame, imagePoints[1], imagePoints[4], color, 2);
+                cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
+                cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
+
+
+                cv::line(frame, imagePoints[0+4], imagePoints[1+4], color, 2);
+                cv::line(frame, imagePoints[1+4], imagePoints[2+4], color, 2);
+                cv::line(frame, imagePoints[2+4], imagePoints[3+4], color, 2);
+                cv::line(frame, imagePoints[3+4], imagePoints[0+4], color, 2);
+                cv::line(frame, imagePoints[3+4], imagePoints[1+4], color, 2);
+                cv::line(frame, imagePoints[2+4], imagePoints[0+4], color, 2);
+
+                cv::line(frame, imagePoints[0+4], imagePoints[4+4], color, 2);
+                cv::line(frame, imagePoints[1+4], imagePoints[4+4], color, 2);
+                cv::line(frame, imagePoints[2+4], imagePoints[4+4], color, 2);
+                cv::line(frame, imagePoints[3+4], imagePoints[4+4], color, 2);
+            }
+            if(key_flag == '7'){
+                ////////////////////////// Task 7 ////////////////////////
+                cv::Mat frame_copy = frame.clone();
+                cv::Mat gray;
+                cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+                cv::Mat harris_corners;
+                cv::cornerHarris(gray, harris_corners, 3, 3, 0.1);
+
+                // Normalizing the harris corners
+                cv::Mat harris_corners_norm, harris_corners_norm_scaled;
+                cv::normalize(harris_corners, harris_corners_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, cv::Mat());
+                cv::convertScaleAbs(harris_corners_norm, harris_corners_norm_scaled);
+
+                // Thresholding
+                std::vector<cv::Point> corner_locations;
+                double threshold = 150;
+                std::cout << "Harris cornors detected" << std::endl;
+                for (int i = 0; i < harris_corners_norm.rows; ++i) {
+                    for (int j = 0; j < harris_corners_norm.cols; ++j) {
+                        if (static_cast<int>(harris_corners_norm.at<float>(i, j)) > threshold) {
+                            corner_locations.push_back(cv::Point(j, i));
+                        }
+                    }
                 }
 
-            ///////////////////////// Task 6 ///////////////////////////
-            cv::Scalar color(100, 25, 150);
-            cv::line(frame, imagePoints[0], imagePoints[1], color, 2);
-            cv::line(frame, imagePoints[1], imagePoints[2], color, 2);
-            cv::line(frame, imagePoints[2], imagePoints[3], color, 2);
-            cv::line(frame, imagePoints[3], imagePoints[0], color, 2);
-            cv::line(frame, imagePoints[3], imagePoints[1], color, 2);
-            cv::line(frame, imagePoints[2], imagePoints[0], color, 2);
+                // Displaying harris cornors on image
+                int num_points = corner_locations.size();
+                for (int i=0; i< num_points ; ++i) {
+                    cv::circle(frame_copy, corner_locations[i], 3, cv::Scalar(0, 0, 255), 2);
+                }
+                cv::imshow("Harris Cornars", frame_copy);
+                cv::imshow("Harris", harris_corners_norm_scaled);
 
-            cv::line(frame, imagePoints[0], imagePoints[4], color, 2);
-            cv::line(frame, imagePoints[1], imagePoints[4], color, 2);
-            cv::line(frame, imagePoints[2], imagePoints[4], color, 2);
-            cv::line(frame, imagePoints[3], imagePoints[4], color, 2);
+            }
+            if(key_flag == 'c' || key_flag == 'a'){
+                ///////////////////////// Extension: Expanding/contracting sphere ///////////////////////////
 
-<<<<<<< HEAD:src/augmentedReality_abhishek.cpp
+                // parameters for plotting sphere
+                vector<Point3f> sphere_points;
+                int N = 20;
 
-            cv::line(frame, imagePoints[0+4], imagePoints[1+4], color, 2);
-            cv::line(frame, imagePoints[1+4], imagePoints[2+4], color, 2);
-            cv::line(frame, imagePoints[2+4], imagePoints[3+4], color, 2);
-            cv::line(frame, imagePoints[3+4], imagePoints[0+4], color, 2);
-            cv::line(frame, imagePoints[3+4], imagePoints[1+4], color, 2);
-            cv::line(frame, imagePoints[2+4], imagePoints[0+4], color, 2);
+                // expanding/contracting circle:
+                // generates points shaped in a sphere in regular angular intervals
+                generate_sphere_points(N, count_flag, radius, origin, sphere_points);
 
-            cv::line(frame, imagePoints[0+4], imagePoints[4+4], color, 2);
-            cv::line(frame, imagePoints[1+4], imagePoints[4+4], color, 2);
-            cv::line(frame, imagePoints[2+4], imagePoints[4+4], color, 2);
-            cv::line(frame, imagePoints[3+4], imagePoints[4+4], color, 2);
-        }
+                // display the points
+                std::vector<cv::Point2f> imagePoints;
+                cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+                for (const auto& point : imagePoints){
+                    cv::circle(frame, point, 1, cv::Scalar(255, 0, 0), -1);
+                }
+            }
+            if(key_flag == 'p'){
+                ////////////////////////// Extension: Overlaying painting on top of chessboard ////////////////////////
 
-        //////////////////////// TASK 2 ////////////////////////
-        // if(key == 's' && success == true){
-        //     //appending to corner_list and point_list
-        //     select_images(corner_set, corner_list, point_set, point_list);
-
-        //     //print err checking
-        //     if(corner_list.size() != point_list.size()){
-        //         cout << "WARNING: corner list and point list do not match in dimension, check program." << endl;
-        //     }
-        //     else{
-        //         cout << corner_list.size() << " of 5 required calibration images saved." << endl;
-        //     }
-        // }
-
-        //////////////////////// TASK 3 ////////////////////////
-
-        // if(point_list.size() == 5 && calibration_flag == 0){
-        //     vector<cv::Mat> rotations, translations;
-
-        //     // Perform camera calibration
-        //     double reprojection_error = cv::calibrateCamera(point_list, corner_list, image_size, camera_matrix, distortion_coefficients,
-        //                                                 rotations, translations, cv::CALIB_FIX_ASPECT_RATIO);
-
-        //     cout << "Calibration Results:" << endl;
-        //     cout << "Camera Matrix:\n" << camera_matrix << endl;
-        //     cout << "Distortion Coefficients:" << endl;
-        //     for (int i = 0; i < distortion_coefficients.size(); i++){
-        //         cout << distortion_coefficients[i] << ", ";
-        //     }
-        //     cout << endl;
-        //     for (size_t i = 0; i < rotations.size(); ++i) {
-        //         cout << "Image " << i + 1 << ":\n";
-        //         cout << "Rotation Vector:\n" << rotations[i] << endl;
-        //         cout << "Translation Vector:\n" << translations[i] << endl;
-        //     }
-        //     cout << "Total Reprojection Error: " << reprojection_error << endl;
+                const float scale = 5.0f;
+                std::vector<cv::Point3f> objectPoints = {
+                    cv::Point3f(-1, 1, 0), cv::Point3f(9, 1, 0),cv::Point3f(9, -6, 0), cv::Point3f(-1, -6, 0)
             
-        //     calibration_flag++;
-        // }
-        
-        
+                };
 
-=======
-            ///////////////////////// Extension: drawing sphere ///////////////////////////
+                std::vector<cv::Point2f> imagePoints;
+                cv::projectPoints(objectPoints, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
 
-            vector<Point3f> sphere_points;
-            int N = 20;
-            generate_sphere_points(N, count_flag, radius, origin, sphere_points);
-            cv::projectPoints(sphere_points, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
-            for (const auto& point : imagePoints){
-                cv::circle(frame, point, 1, cv::Scalar(255, 0, 0), -1);
+
+                std::vector<cv::Point2f> newPoints = imagePoints;
+                std::vector<cv::Point2f> originalPoints = {
+                                        cv::Point2f(0, 0),
+                                        cv::Point2f(image1.cols - 1, 0),
+                                        cv::Point2f(image1.cols - 1, image1.rows - 1),
+                                        cv::Point2f(0, image1.rows - 1)
+                                        };
+
+                // Compute the perspective transform matrix
+                cv::Mat transformMatrix = cv::getPerspectiveTransform(originalPoints, newPoints);
+                
+                // Warp the first image
+                cv::Mat warpedImage;
+                cv::warpPerspective(image1, warpedImage, transformMatrix, frame.size());
+                std::cout<< "Before perspectinve transform"<< std::endl;
+                // Overlaying the warped image on top of the frame
+                for (int y = 0; y < warpedImage.rows; ++y) {
+                    for (int x = 0; x < warpedImage.cols; ++x) {
+                        cv::Vec3b pixel = warpedImage.at<cv::Vec3b>(y, x);
+                        if (pixel != cv::Vec3b(0, 0, 0)) {
+                            frame.at<cv::Vec3b>(y, x) = pixel;
+                        }
+                    }
+                }
             }
         }
 
->>>>>>> 0268fc2f25eedd37f77eb46ae92ec14d65ae2210:src/augmentedReality.cpp
         if(key == 'q') {
             break;
         }
