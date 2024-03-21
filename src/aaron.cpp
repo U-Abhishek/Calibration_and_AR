@@ -104,10 +104,10 @@ int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coeff
         getline(cin, filename);
 
         //error checking
-        if (filename.substr(filename.length() - 5) != ".yaml") {
+        if (filename.find(".yaml") == string::npos) {
             filename += ".yaml";
         }
-        if(filename.substr(0,23) != "../../data/calibration/"){
+        if(filename.find("../../data/calibration/") == string::npos){
             filename = "../../data/calibration/" + filename;
         }
 
