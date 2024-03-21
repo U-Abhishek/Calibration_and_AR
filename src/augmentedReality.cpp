@@ -1,5 +1,7 @@
 /*
-Test file workspace for Aaron Pan
+Aaron Pan, Abhishek Uddaraju
+3/ 16 / 2024
+This file consists of all the code to perform Project 4
 */
 #include <iostream>
 #include "../include/aaron.h"
@@ -72,9 +74,13 @@ int main(int argc, char *argv[]) {
             break;
         }
         char key = cv::waitKey(1);
-        //For Task 5/6: drawing simple object
+        //For Task 5: drawing simple object
         if(key == '5'){
             key_flag = '5';
+        }
+        //For Task 6: drawing simple object
+        if(key == '6'){
+            key_flag = '6';
         }
         //For Task 7: Harris corners
         if(key == '7'){
@@ -123,8 +129,22 @@ int main(int argc, char *argv[]) {
                 cout << "solvePnP FAILED" << endl;
             }
 
-            if(key_flag == '5' || key_flag == 'a'){
+            if (key_flag == '5'){
                 ////////////////////////// Task 5 ////////////////////////
+                std::vector<cv::Point3f> objectPoints = {
+                    cv::Point3f(0, 0, 0), cv::Point3f(8, 0, 0),cv::Point3f(8, -5, 0), cv::Point3f(0, -5, 0)
+                };
+
+                std::vector<cv::Point2f> imagePoints;
+                cv::projectPoints(objectPoints, rotations, translations, camera_matrix, distortion_coefficients, imagePoints);
+
+                // Draw projected points on an image (assuming a blank image for demonstration)
+                for (const auto& point : imagePoints) {
+                    cv::circle(frame, point, 5, cv::Scalar(255, 0, 255), -1);
+                    }
+            }
+            if(key_flag == '6' || key_flag == 'a'){
+                ////////////////////////// Task 6 ////////////////////////
                 cout << "dsfadsfdsafdsafdsafdsafdsafdsaf" << endl;
                 const float scale = 3.0f;
                 std::vector<cv::Point3f> objectPoints = {
