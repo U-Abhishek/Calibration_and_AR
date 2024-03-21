@@ -28,7 +28,7 @@ This project introduces techniques of camera calibration and virtual object gene
 
 ### 1. Cloning the project
 ```
-$ git clone https://github.com/U-Abhishek/Real-time-2D-object-detection.git
+$ git clone https://github.com/U-Abhishek/Calibration_and_AR.git
 $ cd /project location
 ```
 
@@ -68,20 +68,20 @@ $ .\calibration.exe
 // Enter the .yaml filename in the terminal "Make sure you place the YAML file in {executable location}/../../data/calibration"
 ```
 
-### 2) Keys required to calibrate camera
+### 2) Keys required to calibrate the camera
 | Key      | Description                          |
 |----------|--------------------------------------|
 | s        | Select the frame for calibration           |
 | c        | Generates calibration matrix and saves it to YAML                |
 
-### 2) Command line arguments required to run the ** AR Executable**
+### 3) Command line arguments required to run the ** AR Executable**
 ```
 $ cd directory_of_executable
 $ .\AugmentedReality.exe
 // Enter the .yaml filename in the terminal "Make sure you place the YAML file in {executable location}/../../data/calibration"
 ```
 
-### 3) Key presses for performing different tasks 
+### 4) Key presses for performing different tasks 
 
 | Task Key | Task Description                      |
 |----------|--------------------------------------|
