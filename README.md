@@ -2,9 +2,8 @@
 
 #### Video Demo
 
-Main Video Demo for this project: 
+Main Video Demo for this project: https://drive.google.com/file/d/14w_joGK8F-yaiWZ1n0bHXWAhi__YtuLL/view?usp=drive_link 
 
-For more videos on this project [click here.]()
 
 #### Team Members
 - Aaron Pan
