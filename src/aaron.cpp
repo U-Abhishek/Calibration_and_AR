@@ -1,3 +1,8 @@
+/*
+Aaron Pan
+03/16/2024
+This file consists of all the code to perform Project 4
+*/
 #pragma once
 
 #include "../include/aaron.h"
@@ -73,7 +78,10 @@ int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> 
         }
     }
     if(count_flag == 0){
+<<<<<<< HEAD
         cout << radius << endl;
+=======
+>>>>>>> 48c4761c7c365e30c81bdbca4a2037232ea58bed
         if(radius >= 1.5){
             count_flag = 1;
         }
@@ -118,7 +126,11 @@ int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coeff
             break;
         }
         else{
+<<<<<<< HEAD
             cerr << "Failed to open " << filename << "Check filename and make sure there is a file in the data/calibration path" << endl;
+=======
+            cerr << "Failed to open " << filename << "\nCheck filename and make sure there is a file in the data/calibration path" << endl;
+>>>>>>> 48c4761c7c365e30c81bdbca4a2037232ea58bed
         }
     }
     

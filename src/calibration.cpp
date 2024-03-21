@@ -1,5 +1,7 @@
 /*
-Test file workspace for Aaron Pan
+Aaron Pan, Abhishek Uddaraju
+03/16/2024
+This file consists of all the code to perform Project 4
 */
 #include <iostream>
 #include "../include/aaron.h"
