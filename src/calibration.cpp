@@ -91,6 +91,9 @@ int main(int argc, char *argv[]) {
                 camera_matrix.at<double>(1, 2) = image_size.height / 2;
                 std::vector<double> distortion_coefficients;
 
+                cout << "Before Calibration:" << endl;
+                cout << "Camera Matrix:" << endl << camera_matrix << endl;
+
                 // Output variables
                 vector<cv::Mat> rotations, translations;
 
@@ -100,13 +103,16 @@ int main(int argc, char *argv[]) {
 
                 cout << "Calibration Results:" << endl;
                 cout << "Camera Matrix:\n" << camera_matrix << endl;
-                //cout << "Distortion Coefficients:\n" << distortion_coefficients << endl;
 
-                for (size_t i = 0; i < rotations.size(); ++i) {
-                    cout << "Image " << i + 1 << ":\n";
-                    cout << "Rotation Vector:\n" << rotations[i] << endl;
-                    cout << "Translation Vector:\n" << translations[i] << endl;
+                cout << "Distortion Coefficients:" << endl << "[ ";
+                for (size_t i = 0; i < distortion_coefficients.size(); ++i) {
+                    if(i < distortion_coefficients.size()-1)
+                        cout <<  distortion_coefficients[i] << ", ";
+                    else{
+                        cout <<  distortion_coefficients[i] << " ]" << endl;
+                    }
                 }
+
                 cout << "Total Reprojection Error: " << reprojection_error << endl;
 
                 // write camera matrix and distoriton coefficients to YAML file

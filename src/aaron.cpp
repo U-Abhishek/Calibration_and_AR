@@ -133,7 +133,7 @@ int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coeff
     cout << "Distortion coefficients:" << endl;
     cout << "[ ";
     for(int i = 0; i < distortion_coefficients.size(); i++){
-        if(i != distortion_coefficients.size()){
+        if(i != distortion_coefficients.size() - 1){
             cout << distortion_coefficients[i] << ", ";
         }
         else{
@@ -155,10 +155,10 @@ int write_camera_calibration(Mat camera_matrix, vector<double> distortion_coeffi
         getline(cin, filename);
 
         //error checking
-        if (filename.substr(filename.length() - 5) != ".yaml") {
+        if (filename.find(".yaml") == string::npos) {
             filename += ".yaml";
         }
-        if(filename.substr(0,23) != "../../data/calibration/"){
+        if(filename.find("../../data/calibration/") == string::npos){
             filename = "../../data/calibration/" + filename;
         }
 
