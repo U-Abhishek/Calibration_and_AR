@@ -12,32 +12,17 @@ For more videos on this project [click here.]()
   
 #### Operating System Used: _Windows_
 #### IDE: _VScode_
-#### Time Travel days: 1
+#### Time Travel days: 2
 
-## Tasks and Function Location
-
-| Task Number | Function Location|
-|----------|----------|
-| Task 1| main.cpp | 
-| Task 2| preprocess_classification.cpp | 
-| Task 3| process_featureExtract.cpp | 
-| Task 4| process_featureExtract.cpp | 
-| Task 5| main.cpp | 
-| Task 6| preprocess_classification.cpp | 
-| Task 9 KNN| preprocess_classification.cpp | 
 
 ## Table of Contents
-1. [File Structure](#file_structure)
-2. [Intoduction](#introduction)
-3. [Installation](#installation)
-4. [Usage](#usage)
-
-## File_Structure
-
+1. [Intoduction](#introduction)
+2. [Installation](#installation)
+3. [Usage](#usage)
 
 
 ## Introduction
-
+This project introduces techniques of camera calibration and virtual object generation in OpenCV. The goal of camera calibration is to correct for any radial and tangential distortion in the image first before object generation. Calibration and calculating camera pose are both done using a chessboard and OpenCV function. Once completed, virtual objects can be generated and placed in the scene.
 
 ## Installation  
 
@@ -76,20 +61,35 @@ Visual Studio Code is a lightweight but powerful source code editor that runs on
 
 ## Usage
 
-### 1) Command line arguments required to run the Executable
+### 1) Command line arguments required to run the **Calibration Executable**
 ```
 $ cd directory_of_executable
-$ .\executable_name.exe "database_csv_path"
+$ .\calibration.exe
+// Enter the .yaml filename in the terminal "Make sure you place the YAML file in {executable location}/../../data/calibration"
 ```
-This will start the program you will be able to see all the results and intermediate processed images. 
-### 2) To add a new object to the database:
-1) place the object in front of the camera
-2) Press "n" after clicking on the window where the frames are displayed
-3) Type the name of the object in the terminal
 
-### 3) For switching to KNN classification
-- Press "k" after clicking on the window where the frames are displayed
+### 2) Keys required to calibrate camera
+| Key      | Description                          |
+|----------|--------------------------------------|
+| s        | Select the frame for calibration           |
+| c        | Generates calibration matrix and saves it to YAML                |
 
-### 3) For switching to L2 distance based NN classification
-- Press "l" after clicking on the window where the frames are displayed
+### 2) Command line arguments required to run the ** AR Executable**
+```
+$ cd directory_of_executable
+$ .\AugmentedReality.exe
+// Enter the .yaml filename in the terminal "Make sure you place the YAML file in {executable location}/../../data/calibration"
+```
+
+### 3) Key presses for performing different tasks 
+
+| Task Key | Task Description                      |
+|----------|--------------------------------------|
+| 5        | Draw corners of the board            |
+| 6        | Draw a simple object                 |
+| 7        | Detect Harris corners                |
+| c        | Expand or contract a circle          |
+| p        | Overlay painting onto a chessboard   |
+| o        | Default: Do not overlay anything     |
+| a        | Perform task specified by `key`      |
 
