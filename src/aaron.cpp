@@ -73,6 +73,7 @@ int generate_sphere_points(int N, int &count_flag, float &radius, vector<float> 
         }
     }
     if(count_flag == 0){
+        cout << radius << endl;
         if(radius >= 1.5){
             count_flag = 1;
         }
@@ -117,7 +118,7 @@ int read_camera_calibration(Mat &camera_matrix, vector<double> &distortion_coeff
             break;
         }
         else{
-            cerr << "Failed to open " << filename << "\nCheck filename and make sure there is a file in the data/calibration path" << endl;
+            cerr << "Failed to open " << filename << "Check filename and make sure there is a file in the data/calibration path" << endl;
         }
     }
     
