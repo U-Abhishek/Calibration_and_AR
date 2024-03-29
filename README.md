@@ -1,4 +1,4 @@
-# Calibration_and_Augmented Reality
+# Camera Calibration and Augmented Reality
 
 #### Video Demo
 
