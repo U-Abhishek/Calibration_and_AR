@@ -2,7 +2,7 @@
 
 #### Video Demo
 
-Main Video Demo for this project: https://drive.google.com/file/d/14w_joGK8F-yaiWZ1n0bHXWAhi__YtuLL/view?usp=drive_link 
+[![](https://img.youtube.com/vi/9KL_6JoIDLk/0.jpg)](https://www.youtube.com/watch?v=9KL_6JoIDLk) 
 
 #### Team Members
 - Aaron Pan
